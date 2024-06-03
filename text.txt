@@ -1,0 +1,7 @@
+pyinstaller --noconfirm --onedir --console /path/to/your/filename.py
+
+
+pyinstaller --onefile 1.py
+
+
+pyinstaller --onefile --noconfirm --onedir --console 1.py
