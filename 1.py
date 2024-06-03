@@ -18,7 +18,7 @@ def calculate_FOS(event=None):
 
         # Check input ranges
         if not (coh_min <= coh_act <= coh_max and phi_min <= phi_act <= phi_max and gamma_min <= gamma_act <= gamma_max and kh_min <= kh_act <= kh_max):
-            messages_single.insert('end', "Use valid range for input values.\n")
+            messages_multiple.insert('end', "Use valid range for input values.\n")
             return
 
         # Define matrices for calculation
@@ -48,9 +48,9 @@ def calculate_FOS(event=None):
         FOS = (((MC5 + 1) / 2) * (FOS_max - FOS_min)) + FOS_min
 
         output_var_single.set(f"{FOS[0]:.3f}")
-        messages_single.insert('end', "Estimation Of FOS Completed.\n")
+        messages_multiple.insert('end', "Estimation Of FOS Completed.\n")
     except ValueError:
-        messages_single.insert('end', "Invalid input values.\n")
+        messages_multiple.insert('end', "Invalid input values.\n")
 
 def upload_file():
     file_path = filedialog.askopenfilename()
@@ -70,9 +70,9 @@ def download_results():
         if file_path:
             with open(file_path, 'w') as file:
                 file.write(f"Estimated FOS: {result}\n")
-                messages_single.insert('end', "Results downloaded.\n")
+                messages_multiple.insert('end', "Results downloaded.\n")
     else:
-        messages_single.insert('end', "No results to download.\n")
+        messages_multiple.insert('end', "No results to download.\n")
 
 # Create the main window
 root = tk.Tk()
@@ -106,17 +106,10 @@ calculate_button.grid(row=len(labels)+1, column=0, columnspan=3, pady=10)
 
 # Create a label to display the result
 output_var_single = tk.StringVar()
-# Create a frame to contain the result
-result_frame = tk.Frame(frame_single, borderwidth=2, relief='groove')
-result_frame.grid(row=len(labels)+2, column=0, columnspan=3, pady=5)
-
-# Create a label to display the result
-result_label = tk.Label(result_frame, text="Estimated FOS:", font=("Arial", 12))
-result_label.pack(side="left")
-
-result_value = tk.Label(result_frame, textvariable=output_var_single, font=("Arial", 12))
-result_value.pack(side="right", padx=5, pady=5, expand=True, fill="both")
-
+result_label = tk.Label(frame_single, text="Estimated FOS:", font=("Arial", 12))
+result_label.grid(row=len(labels)+2, column=0, columnspan=3, pady=5)
+result_value = tk.Label(frame_single, textvariable=output_var_single, font=("Arial", 12))
+result_value.grid(row=len(labels)+3, column=0, columnspan=3, pady=5)
 
 # Title for multiple sets of inputs
 tk.Label(frame_multiple, text="Multiple Sets of Inputs", font=("Arial", 14)).grid(row=0, column=0, columnspan=2, pady=10)
@@ -127,10 +120,11 @@ upload_button.grid(row=1, column=0, columnspan=2, pady=5)
 
 download_button = tk.Button(frame_multiple, text="Estimate and Download", command=download_results)
 download_button.grid(row=2, column=0, columnspan=2, pady=5)
-
 # Create a text widget for messages
 messages_multiple = tk.Text(frame_multiple, height=5, width=50)
 messages_multiple.grid(row=3, column=0, columnspan=2, pady=10, sticky="e")
+
+
 
 # Run the main event loop
 root.mainloop()
