@@ -102,16 +102,14 @@ for i, (label, valid_range) in enumerate(zip(labels, valid_ranges)):
 
 # Create a button to calculate FOS
 calculate_button = tk.Button(frame_single, text="Calculate FOS", command=calculate_FOS)
-calculate_button.grid(row=len(labels)+1, column=0, columnspan=3)
+calculate_button.grid(row=len(labels)+1, column=0, columnspan=3, pady=10)
 
 # Create a label to display the result
 output_var_single = tk.StringVar()
-result_label = tk.Label(frame_single, textvariable=output_var_single)
-result_label.grid(row=len(labels)+2, column=0, columnspan=3)
-
-# Create a text widget for messages
-messages_single = tk.Text(frame_single, height=5, width=50)
-messages_single.grid(row=len(labels)+3, column=0, columnspan=3)
+result_label = tk.Label(frame_single, text="Estimated FOS:", font=("Arial", 12))
+result_label.grid(row=len(labels)+2, column=0, columnspan=3, pady=5)
+result_value = tk.Label(frame_single, textvariable=output_var_single, font=("Arial", 12))
+result_value.grid(row=len(labels)+3, column=0, columnspan=3, pady=5)
 
 # Title for multiple sets of inputs
 tk.Label(frame_multiple, text="Multiple Sets of Inputs", font=("Arial", 14)).grid(row=0, column=0, columnspan=2, pady=10)
@@ -122,6 +120,10 @@ upload_button.grid(row=1, column=0, columnspan=2, pady=5)
 
 download_button = tk.Button(frame_multiple, text="Estimate and Download", command=download_results)
 download_button.grid(row=2, column=0, columnspan=2, pady=5)
+
+# Create a text widget for messages
+messages_multiple = tk.Text(frame_multiple, height=5, width=50)
+messages_multiple.grid(row=3, column=0, columnspan=2, pady=10, sticky="e")
 
 # Run the main event loop
 root.mainloop()
