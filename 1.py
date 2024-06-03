@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import filedialog
 import numpy as np
 
 def calculate_FOS(event=None):
@@ -51,9 +52,31 @@ def calculate_FOS(event=None):
         FOS = (((MC5 + 1) / 2) * (FOS_max - FOS_min)) + FOS_min
 
         output_var.set(f"{FOS[0]:.3f}")
-        messages.insert('end', "Estimation Of FOC of Mount St. Helens Completed.\n")
+        messages.insert('end', "Estimation Of FOS Completed.\n")
     except ValueError:
         pass
+
+def upload_file():
+    file_path = filedialog.askopenfilename()
+    if file_path:
+        with open(file_path, 'r') as file:
+            data = file.read()
+            # Assuming the file contains lines of input values in the order: cohesion, phi, gamma, kh
+            inputs = data.split('\n')
+            for i, input_value in enumerate(inputs):
+                entries[i].delete(0, tk.END)
+                entries[i].insert(0, input_value)
+
+def download_results():
+    result = output_var.get()
+    if result:
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+        if file_path:
+            with open(file_path, 'w') as file:
+                file.write(f"Estimated FOS: {result}\n")
+                messages.insert('end', "Results downloaded.\n")
+    else:
+        messages.insert('end', "No results to download.\n")
 
 # Create the main window
 root = tk.Tk()
@@ -75,14 +98,21 @@ for i, (label, valid_range) in enumerate(zip(labels, valid_ranges)):
 calculate_button = tk.Button(root, text="Calculate FOS", command=calculate_FOS)
 calculate_button.grid(row=len(labels), column=0, columnspan=3)
 
+# Create buttons to upload file and download results
+upload_button = tk.Button(root, text="Upload dataset", command=upload_file)
+upload_button.grid(row=len(labels)+1, column=0, columnspan=3)
+
+download_button = tk.Button(root, text="Estimate and Download", command=download_results)
+download_button.grid(row=len(labels)+2, column=0, columnspan=3)
+
 # Create a label to display the result
 output_var = tk.StringVar()
 result_label = tk.Label(root, textvariable=output_var)
-result_label.grid(row=len(labels)+1, column=0, columnspan=3)
+result_label.grid(row=len(labels)+3, column=0, columnspan=3)
 
 # Create a text widget for messages
 messages = tk.Text(root, height=5, width=50)
-messages.grid(row=len(labels)+2, column=0, columnspan=3)
+messages.grid(row=len(labels)+4, column=0, columnspan=3)
 
 # Run the main event loop
 root.mainloop()
