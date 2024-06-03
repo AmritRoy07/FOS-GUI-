@@ -1,14 +1,13 @@
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import filedialog
+from tkinter import messagebox, filedialog
 import numpy as np
 
 def calculate_FOS(event=None):
     try:
-        coh_act = float(entries[0].get())
-        phi_act = float(entries[1].get())
-        gamma_act = float(entries[2].get())
-        kh_act = float(entries[3].get())
+        coh_act = float(entries_single[0].get())
+        phi_act = float(entries_single[1].get())
+        gamma_act = float(entries_single[2].get())
+        kh_act = float(entries_single[3].get())
 
         # Define valid ranges
         coh_min, coh_max = 809.77, 1195.17
@@ -19,10 +18,7 @@ def calculate_FOS(event=None):
 
         # Check input ranges
         if not (coh_min <= coh_act <= coh_max and phi_min <= phi_act <= phi_max and gamma_min <= gamma_act <= gamma_max and kh_min <= kh_act <= kh_max):
-            messages.insert('end', "Use valid range for input values.\n")
-            return
-
-        if len(str(kh_act).split('.')[1]) < 2:
+            messages_single.insert('end', "Use valid range for input values.\n")
             return
 
         # Define matrices for calculation
@@ -51,10 +47,10 @@ def calculate_FOS(event=None):
         MC5 = np.add(MC4, BM2)
         FOS = (((MC5 + 1) / 2) * (FOS_max - FOS_min)) + FOS_min
 
-        output_var.set(f"{FOS[0]:.3f}")
-        messages.insert('end', "Estimation Of FOS Completed.\n")
+        output_var_single.set(f"{FOS[0]:.3f}")
+        messages_single.insert('end', "Estimation Of FOS Completed.\n")
     except ValueError:
-        pass
+        messages_single.insert('end', "Invalid input values.\n")
 
 def upload_file():
     file_path = filedialog.askopenfilename()
@@ -64,55 +60,68 @@ def upload_file():
             # Assuming the file contains lines of input values in the order: cohesion, phi, gamma, kh
             inputs = data.split('\n')
             for i, input_value in enumerate(inputs):
-                entries[i].delete(0, tk.END)
-                entries[i].insert(0, input_value)
+                entries_single[i].delete(0, tk.END)
+                entries_single[i].insert(0, input_value)
 
 def download_results():
-    result = output_var.get()
+    result = output_var_single.get()
     if result:
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
         if file_path:
             with open(file_path, 'w') as file:
                 file.write(f"Estimated FOS: {result}\n")
-                messages.insert('end', "Results downloaded.\n")
+                messages_single.insert('end', "Results downloaded.\n")
     else:
-        messages.insert('end', "No results to download.\n")
+        messages_single.insert('end', "No results to download.\n")
 
 # Create the main window
 root = tk.Tk()
 root.title("FOS Estimator of Mount St. Helens")
 
-# Create input parameter labels and entry fields
+# Create frames for single and multiple sets of inputs
+frame_single = tk.Frame(root, padx=10, pady=10, borderwidth=2, relief='groove')
+frame_single.grid(row=0, column=0, padx=10, pady=10, sticky='n')
+
+frame_multiple = tk.Frame(root, padx=10, pady=10, borderwidth=2, relief='groove')
+frame_multiple.grid(row=0, column=1, padx=10, pady=10, sticky='n')
+
+# Title for single set of inputs
+tk.Label(frame_single, text="Single Set of Inputs", font=("Arial", 14)).grid(row=0, column=0, columnspan=3, pady=10)
+
+# Input fields for single set of inputs
 labels = ["Cohesion (c, kN/m²)", "Angle of internal friction (Ø, °)", "Unit weight (γ, kN/m³)", "Seismic coefficient (ke, -)"]
 valid_ranges = ["(809.77 to 1195.17)", "(35.18 to 49.40)", "(22.02 to 25.99)", "(0 to 0.20)"]
-entries = []
+entries_single = []
 
 for i, (label, valid_range) in enumerate(zip(labels, valid_ranges)):
-    tk.Label(root, text=label).grid(row=i, column=0)
-    tk.Label(root, text=valid_range).grid(row=i, column=2)
-    entry = tk.Entry(root)
-    entry.grid(row=i, column=1)
-    entries.append(entry)
+    tk.Label(frame_single, text=label).grid(row=i+1, column=0)
+    tk.Label(frame_single, text=valid_range).grid(row=i+1, column=2)
+    entry = tk.Entry(frame_single)
+    entry.grid(row=i+1, column=1)
+    entries_single.append(entry)
 
 # Create a button to calculate FOS
-calculate_button = tk.Button(root, text="Calculate FOS", command=calculate_FOS)
-calculate_button.grid(row=len(labels), column=0, columnspan=3)
-
-# Create buttons to upload file and download results
-upload_button = tk.Button(root, text="Upload dataset", command=upload_file)
-upload_button.grid(row=len(labels)+1, column=0, columnspan=3)
-
-download_button = tk.Button(root, text="Estimate and Download", command=download_results)
-download_button.grid(row=len(labels)+2, column=0, columnspan=3)
+calculate_button = tk.Button(frame_single, text="Calculate FOS", command=calculate_FOS)
+calculate_button.grid(row=len(labels)+1, column=0, columnspan=3)
 
 # Create a label to display the result
-output_var = tk.StringVar()
-result_label = tk.Label(root, textvariable=output_var)
-result_label.grid(row=len(labels)+3, column=0, columnspan=3)
+output_var_single = tk.StringVar()
+result_label = tk.Label(frame_single, textvariable=output_var_single)
+result_label.grid(row=len(labels)+4, column=0, columnspan=3)
 
 # Create a text widget for messages
-messages = tk.Text(root, height=5, width=50)
-messages.grid(row=len(labels)+4, column=0, columnspan=3)
+messages_single = tk.Text(frame_single, height=5, width=50)
+messages_single.grid(row=len(labels)+5, column=0, columnspan=3)
+
+# Title for multiple sets of inputs
+tk.Label(frame_multiple, text="Multiple Sets of Inputs", font=("Arial", 14)).grid(row=0, column=0, columnspan=2, pady=10)
+
+upload_button = tk.Button(frame_single, text="Upload dataset", command=upload_file)
+upload_button.grid(row=len(labels)+2, column=0, columnspan=3)
+
+download_button = tk.Button(frame_single, text="Estimate and Download", command=download_results)
+download_button.grid(row=len(labels)+3, column=0, columnspan=3)
+# Functionality for multiple sets of inputs will be added here
 
 # Run the main event loop
 root.mainloop()
