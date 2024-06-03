@@ -106,10 +106,17 @@ calculate_button.grid(row=len(labels)+1, column=0, columnspan=3, pady=10)
 
 # Create a label to display the result
 output_var_single = tk.StringVar()
-result_label = tk.Label(frame_single, text="Estimated FOS:", font=("Arial", 12))
-result_label.grid(row=len(labels)+2, column=0, columnspan=3, pady=5)
-result_value = tk.Label(frame_single, textvariable=output_var_single, font=("Arial", 12))
-result_value.grid(row=len(labels)+3, column=0, columnspan=3, pady=5)
+# Create a frame to contain the result
+result_frame = tk.Frame(frame_single, borderwidth=2, relief='groove')
+result_frame.grid(row=len(labels)+2, column=0, columnspan=3, pady=5)
+
+# Create a label to display the result
+result_label = tk.Label(result_frame, text="Estimated FOS:", font=("Arial", 12))
+result_label.pack(side="left")
+
+result_value = tk.Label(result_frame, textvariable=output_var_single, font=("Arial", 12))
+result_value.pack(side="right", padx=5, pady=5, expand=True, fill="both")
+
 
 # Title for multiple sets of inputs
 tk.Label(frame_multiple, text="Multiple Sets of Inputs", font=("Arial", 14)).grid(row=0, column=0, columnspan=2, pady=10)
