@@ -107,21 +107,21 @@ calculate_button.grid(row=len(labels)+1, column=0, columnspan=3)
 # Create a label to display the result
 output_var_single = tk.StringVar()
 result_label = tk.Label(frame_single, textvariable=output_var_single)
-result_label.grid(row=len(labels)+4, column=0, columnspan=3)
+result_label.grid(row=len(labels)+2, column=0, columnspan=3)
 
 # Create a text widget for messages
 messages_single = tk.Text(frame_single, height=5, width=50)
-messages_single.grid(row=len(labels)+5, column=0, columnspan=3)
+messages_single.grid(row=len(labels)+3, column=0, columnspan=3)
 
 # Title for multiple sets of inputs
 tk.Label(frame_multiple, text="Multiple Sets of Inputs", font=("Arial", 14)).grid(row=0, column=0, columnspan=2, pady=10)
 
-upload_button = tk.Button(frame_single, text="Upload dataset", command=upload_file)
-upload_button.grid(row=len(labels)+2, column=0, columnspan=3)
+# Create buttons to upload file and download results
+upload_button = tk.Button(frame_multiple, text="Upload dataset", command=upload_file)
+upload_button.grid(row=1, column=0, columnspan=2, pady=5)
 
-download_button = tk.Button(frame_single, text="Estimate and Download", command=download_results)
-download_button.grid(row=len(labels)+3, column=0, columnspan=3)
-# Functionality for multiple sets of inputs will be added here
+download_button = tk.Button(frame_multiple, text="Estimate and Download", command=download_results)
+download_button.grid(row=2, column=0, columnspan=2, pady=5)
 
 # Run the main event loop
 root.mainloop()
